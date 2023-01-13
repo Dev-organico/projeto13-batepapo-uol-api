@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
+import dayjs from "dayjs"
 import { MongoClient } from "mongodb"
 dotenv.config()
 
@@ -15,38 +16,77 @@ let db
 
 try {
     await mongoClient.connect();
+    db = mongoClient.db()
     console.log('MongoDB Connected!')
 } catch (err) {
     console.log(err.message)
 }
 
-db = mongoClient.db()
-const participants = db.collection("participants");
-const messages = db.collection("messages");
 
-app.post('/participants' , async (req, res) => {
+app.post('/participants', async (req, res) => {
+
+    const name = req.body.name
+
+    const lastStatus = Date.now()
+
+    const time = dayjs().format("HH:mm:ss")
+    
+
+    if (!name) return res.sendStatus(422)
+
+    try {
+        const alreadyExist = await db.collection("participants").findOne({ name })
+
+        if (alreadyExist) return res.sendStatus(409)
+
+        await db.collection("participants").insertOne(
+            {
+
+                name: name,
+                lastStatus: lastStatus
+
+            }
+        )
+
+        await db.collection("messages").insertOne(
+            {
+                from: name,
+                to: 'Todos',
+                text: 'entra na sala...',
+                type: 'status',
+                time: time
+            }
+        )
+        
+        
+        res.sendStatus(201)
+
+    } catch (err) {
+        return res.status(500).send(err.message)
+
+    }
 
 
 })
 
-app.get('/participants' , async (req, res) => {
+app.get('/participants', async (req, res) => {
 
-    
+
 })
 
-app.post('/messages' , async (req, res) => {
+app.post('/messages', async (req, res) => {
 
-    
+
 })
 
-app.get('/messages' , async (req, res) => {
+app.get('/messages', async (req, res) => {
 
-    
+
 })
 
-app.post('/status' , async (req, res) => {
+app.post('/status', async (req, res) => {
 
-    
+
 })
 
 
