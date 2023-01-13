@@ -30,7 +30,7 @@ app.post('/participants', async (req, res) => {
     const lastStatus = Date.now()
 
     const time = dayjs().format("HH:mm:ss")
-    
+
 
     if (!name) return res.sendStatus(422)
 
@@ -70,6 +70,14 @@ app.post('/participants', async (req, res) => {
 })
 
 app.get('/participants', async (req, res) => {
+
+    try{
+        const participantsList = await db.collection("participants").find().toArray()
+
+        res.send(participantsList)
+    }catch(err){
+        return res.status(500).send(err.message)
+    }
 
 
 })
