@@ -26,7 +26,7 @@ try {
 
 app.post('/participants', async (req, res) => {
 
-    const  name  = req.body
+    const  {name}  = req.body
 
     const lastStatus = Date.now()
 
@@ -92,6 +92,22 @@ app.get('/participants', async (req, res) => {
 })
 
 app.post('/messages', async (req, res) => {
+
+    const { to,text,type } = req.body
+
+    const from = req.header
+
+    const nameSchema = joi.object({
+        name: joi.string().required()
+    })
+
+
+    const validation = nameSchema.validate(name, { abortEarly: false })
+
+    if (validation.error) {
+        return res.sendStatus(422)
+    }
+
 
 
 })
