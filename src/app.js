@@ -13,6 +13,11 @@ const PORT = 5000
 
 
 const mongoClient = new MongoClient(process.env.DATABASE_URL)
+
+const time = dayjs().format("HH:mm:ss")
+
+const lastStatus = Date.now()
+
 let db
 
 try {
@@ -27,10 +32,6 @@ try {
 app.post('/participants', async (req, res) => {
 
     const name = req.body
-
-    const lastStatus = Date.now()
-
-    const time = dayjs().format("HH:mm:ss")
 
     const nameSchema = joi.object({
         name: joi.string().required()
@@ -93,9 +94,9 @@ app.get('/participants', async (req, res) => {
 
 app.post('/messages', async (req, res) => {
 
-    /* const { to, text, type } = req.body
+    const { to, text, type } = req.body
 
-    const from = req.header
+    const from = req.headers.user
 
     const nameSchema = joi.object(
         {
@@ -113,21 +114,17 @@ app.post('/messages', async (req, res) => {
     }
 
     try {
-        const alreadyExist = await db.collection("message").findOne({ from })
+        const alreadyExist = await db.collection("participants").findOne({ name:from })
 
-        if (alreadyExist) return res.sendStatus(409)
-
-        await db.collection("participants").insertOne(
-            {
-
-                
-
-            }
-        )
+        if (!alreadyExist) return res.sendStatus(422)
 
         await db.collection("messages").insertOne(
             {
-                
+                from:from,
+                to:to,
+                text:text,
+                type:type,
+                time:time
             }
         )
 
@@ -137,8 +134,8 @@ app.post('/messages', async (req, res) => {
     } catch (err) {
         return res.status(500).send(err.message)
 
-    } */
-
+    } 
+ 
     
 
 })
