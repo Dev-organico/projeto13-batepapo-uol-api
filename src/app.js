@@ -3,6 +3,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import dayjs from "dayjs"
 import { MongoClient } from "mongodb"
+import joi from "joi"
 dotenv.config()
 
 const app = express()
@@ -25,14 +26,22 @@ try {
 
 app.post('/participants', async (req, res) => {
 
-    const name = req.body.name
+    const  name  = req.body
 
     const lastStatus = Date.now()
 
     const time = dayjs().format("HH:mm:ss")
 
+    const nameSchema = joi.object({
+        name: joi.string().required()
+    })
 
-    if (!name) return res.sendStatus(422)
+
+    const validation = nameSchema.validate(name, { abortEarly: false })
+
+    if (validation.error) {
+        return res.sendStatus(422)
+    }
 
     try {
         const alreadyExist = await db.collection("participants").findOne({ name })
@@ -57,8 +66,8 @@ app.post('/participants', async (req, res) => {
                 time: time
             }
         )
-        
-        
+
+
         res.sendStatus(201)
 
     } catch (err) {
@@ -71,11 +80,11 @@ app.post('/participants', async (req, res) => {
 
 app.get('/participants', async (req, res) => {
 
-    try{
+    try {
         const participantsList = await db.collection("participants").find().toArray()
 
         res.send(participantsList)
-    }catch(err){
+    } catch (err) {
         return res.status(500).send(err.message)
     }
 
