@@ -26,7 +26,7 @@ try {
 
 app.post('/participants', async (req, res) => {
 
-    const  {name}  = req.body
+    const  name  = req.body.name
 
     const lastStatus = Date.now()
 
