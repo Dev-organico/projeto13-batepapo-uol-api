@@ -26,7 +26,7 @@ try {
 
 app.post('/participants', async (req, res) => {
 
-    const  name  = req.body.name
+    const  name  = req.body
 
     const lastStatus = Date.now()
 
@@ -51,7 +51,7 @@ app.post('/participants', async (req, res) => {
         await db.collection("participants").insertOne(
             {
 
-                name: name,
+                name: name.name,
                 lastStatus: lastStatus
 
             }
@@ -59,7 +59,7 @@ app.post('/participants', async (req, res) => {
 
         await db.collection("messages").insertOne(
             {
-                from: name,
+                from: name.name,
                 to: 'Todos',
                 text: 'entra na sala...',
                 type: 'status',
