@@ -26,7 +26,7 @@ try {
 
 app.post('/participants', async (req, res) => {
 
-    const  name  = req.body
+    const name = req.body
 
     const lastStatus = Date.now()
 
@@ -44,7 +44,7 @@ app.post('/participants', async (req, res) => {
     }
 
     try {
-        const alreadyExist = await db.collection("participants").findOne({ name })
+        const alreadyExist = await db.collection("participants").findOne({name:name.name})
 
         if (alreadyExist) return res.sendStatus(409)
 
@@ -93,22 +93,53 @@ app.get('/participants', async (req, res) => {
 
 app.post('/messages', async (req, res) => {
 
-    const { to,text,type } = req.body
+    /* const { to, text, type } = req.body
 
     const from = req.header
 
-    const nameSchema = joi.object({
-        name: joi.string().required()
-    })
+    const nameSchema = joi.object(
+        {
+            to: joi.string().required(),
+            text: joi.string().required(),
+            type: joi.string().valid("message", "private_message").required()
+        }
 
+    )
 
-    const validation = nameSchema.validate(name, { abortEarly: false })
+    const validation = nameSchema.validate({ to, text, type }, { abortEarly: false })
 
     if (validation.error) {
         return res.sendStatus(422)
     }
 
+    try {
+        const alreadyExist = await db.collection("message").findOne({ from })
 
+        if (alreadyExist) return res.sendStatus(409)
+
+        await db.collection("participants").insertOne(
+            {
+
+                
+
+            }
+        )
+
+        await db.collection("messages").insertOne(
+            {
+                
+            }
+        )
+
+
+        res.sendStatus(201)
+
+    } catch (err) {
+        return res.status(500).send(err.message)
+
+    } */
+
+    
 
 })
 
