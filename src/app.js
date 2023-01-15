@@ -140,8 +140,27 @@ app.post('/messages', async (req, res) => {
 
 })
 
-app.get('/messages', async (req, res) => {
+app.get('/messages?', async (req, res) => {
 
+    const limit = req.query.limit
+
+    const user = req.headers.user
+
+    console.log(user)
+
+    try {
+        const messagesList = await db.collection("messages").find().toArray()
+
+        const messagesListFitered = messagesList.filter(el => el.to === "Todos" || el.from === user || el.to === user)
+
+        if(limit) return res.send(messagesListFitered.slice(limit*-1).reverse())
+
+        res.send(messagesListFitered)
+
+    } catch (err) {
+        
+        return res.status(500).send(err.message)
+    }
 
 })
 
