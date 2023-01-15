@@ -153,7 +153,9 @@ app.get('/messages?', async (req, res) => {
 
         const messagesListFitered = messagesList.filter(el => el.to === "Todos" || el.from === user || el.to === user)
 
-        if(limit && limit > 0 && typeof(limit) !== "string") return res.send(messagesListFitered.slice(limit*-1).reverse())
+        if(limit <= 0 || typeof(limit) === "string") return res.sendStatus(422)
+
+        if(limit) return res.send(messagesListFitered.slice(limit*-1).reverse())
 
         res.send(messagesListFitered)
 
