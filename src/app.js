@@ -45,7 +45,7 @@ app.post('/participants', async (req, res) => {
     }
 
     try {
-        const alreadyExist = await db.collection("participants").findOne({name:name.name})
+        const alreadyExist = await db.collection("participants").findOne({ name: name.name })
 
         if (alreadyExist) return res.sendStatus(409)
 
@@ -114,17 +114,17 @@ app.post('/messages', async (req, res) => {
     }
 
     try {
-        const alreadyExist = await db.collection("participants").findOne({ name:from })
+        const alreadyExist = await db.collection("participants").findOne({ name: from })
 
         if (!alreadyExist) return res.sendStatus(422)
 
         await db.collection("messages").insertOne(
             {
-                from:from,
-                to:to,
-                text:text,
-                type:type,
-                time:time
+                from: from,
+                to: to,
+                text: text,
+                type: type,
+                time: time
             }
         )
 
@@ -134,28 +134,34 @@ app.post('/messages', async (req, res) => {
     } catch (err) {
         return res.status(500).send(err.message)
 
-    } 
- 
-    
+    }
+
+
 
 })
 
-app.get('/messages?', async (req, res) => {
+app.get('/messages', async (req, res) => {
 
-    const limit = Number(req.query.limit)
+    let limit = (req.query.limit)
 
     const user = req.headers.user
-
-    console.log(user)
+ 
 
     try {
         const messagesList = await db.collection("messages").find().toArray()
 
         const messagesListFitered = messagesList.filter(el => el.to === "Todos" || el.from === user || el.to === user)
 
-        if(limit <= 0 || !Number.isInteger(limit)) return res.sendStatus(422)
 
-        if(limit) return res.send(messagesListFitered.slice(limit*-1).reverse())
+
+        if(limit){
+
+            limit = parseInt(limit)
+
+            if(limit <= 0 || isNaN(limit)) return res.sendStatus(422)
+
+            return res.send(messagesListFitered.slice(limit * -1).reverse()) 
+        }
 
         res.send(messagesListFitered)
 
