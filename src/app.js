@@ -145,7 +145,7 @@ app.get('/messages', async (req, res) => {
     let limit = (req.query.limit)
 
     const user = req.headers.user
- 
+
 
     try {
         const messagesList = await db.collection("messages").find().toArray()
@@ -154,13 +154,13 @@ app.get('/messages', async (req, res) => {
 
 
 
-        if(limit){
+        if (limit) {
 
             limit = parseInt(limit)
 
-            if(limit <= 0 || isNaN(limit)) return res.sendStatus(422)
+            if (limit <= 0 || isNaN(limit)) return res.sendStatus(422)
 
-            return res.send(messagesListFitered.slice(limit * -1).reverse()) 
+            return res.send(messagesListFitered.slice(limit * -1).reverse())
         }
 
         res.send(messagesListFitered)
