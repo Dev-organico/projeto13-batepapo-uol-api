@@ -37,7 +37,7 @@ setInterval(async () => {
 
         if (el.lastStatus - Date.now() > 10) {
 
-            await db.collection("participants").deleteOne({ _id: el._id })
+            await db.collection("participants").deleteOne({ name:el.name })
 
             await db.collection("messages").insertOne(
                 {
