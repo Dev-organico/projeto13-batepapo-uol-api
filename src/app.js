@@ -33,12 +33,9 @@ setInterval(async () => {
 
     const participantsList = await db.collection("participants").find().toArray()
 
-    const participantsBD = db.collection("participants")
-
     participantsList.forEach(async el => {
 
-        if (Date.now() - el.lastStatus > 10) {
-
+        if (Date.now() - el.lastStatus > 10000) {
 
             await db.collection("participants").deleteOne({ name: el.name })
 
