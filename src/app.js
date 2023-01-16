@@ -28,6 +28,20 @@ try {
     console.log(err.message)
 }
 
+setInterval( async ()=>{
+    try{
+
+        const isOnlineList = await db.collection("participants").find()
+
+        console.log(isOnlineList)
+
+    }catch{
+
+    }
+
+
+
+},10000000)
 
 app.post('/participants', async (req, res) => {
 
@@ -180,9 +194,9 @@ app.post('/status', async (req, res) => {
     try {
         const alreadyExist = await db.collection("participants").findOne({ name:user })
 
-        const id = alreadyExist._id
-
         if (!alreadyExist) return res.sendStatus(404)
+
+        const id = alreadyExist._id
 
         await db.collection("participants").updateOne({ name:user },{$set:{lastStatus:Date.now()}})
 
