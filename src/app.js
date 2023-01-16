@@ -33,11 +33,14 @@ setInterval(async () => {
 
     const participantsList = await db.collection("participants").find().toArray()
 
+    const participantsBD = db.collection("participants")
+
     participantsList.forEach(async el => {
 
-        if (el.lastStatus - Date.now() > 10) {
+        if (Date.now() - el.lastStatus > 10) {
 
-            await db.collection("participants").deleteOne({ name:el.name })
+
+            await db.collection("participants").deleteOne({ name: el.name })
 
             await db.collection("messages").insertOne(
                 {
@@ -207,8 +210,6 @@ app.post('/status', async (req, res) => {
         const alreadyExist = await db.collection("participants").findOne({ name: user })
 
         if (!alreadyExist) return res.sendStatus(404)
-
-        const id = alreadyExist._id
 
         await db.collection("participants").updateOne({ name: user }, { $set: { lastStatus: Date.now() } })
 
